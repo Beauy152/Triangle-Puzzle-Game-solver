@@ -1,13 +1,19 @@
 from pieces import *
 from copy import deepcopy,copy
 from time import perf_counter
+from multiprocessing import Pool,freeze_support
 
 pieces = getPieces()
 solutions = []
 
+
+# def multiprocess(func,n_processors):
+#     with Pool(processes=n_processors) as pool:
+#         return pool.map(func,pieces)
+
 #function to check if board it complete?
 #check num remaining pieces, if 0 then save solution?
-def Solve(s_r,s_i,board,piece,available,depth=1):
+def Solve(piece,available=None,board=getBoard(),s_r=0,s_i=1,depth=1):
     def check(row,index):
         #add extra check if final row
         #if index is even/odd, we can determine required orientation
@@ -37,7 +43,9 @@ def Solve(s_r,s_i,board,piece,available,depth=1):
             else:
                 piece.rotate_2()
         return match
-
+    print(depth)
+    print(piece)
+    if depth == 1: available = pieces.copy()
     #find next position
     available.remove(piece)
 
@@ -55,19 +63,34 @@ def Solve(s_r,s_i,board,piece,available,depth=1):
 
         for p in available:
             temp_board = deepcopy(board)
-            Solve(s_r,s_i,temp_board,p,available.copy(),depth+1)
+            Solve(p,available.copy(),temp_board,s_r,s_i,depth+1)
+    
+#main
+def main():
+    # time_start = perf_counter()
+    #
+    num_processors = 6 # change to num of pieces
+    #
+    # params = []
+    # for piece in pieces:
+    #     params.append([piece,pieces.copy()])
+        #Solve(piece,pieces.copy())
+
+    p = Process(target=f, args=('bob',))
+    p.start()
+    p.join()
+    #results = multiprocess(Solve,num_processors)#(0,1,getBoard(),piece,pieces.copy())
+    #print(results)
     
 
-#main
-start_time = perf_counter()
+    # print("found {0} solutions...".format(len(solutions)))
 
-for piece in pieces:
-    Solve(0,1,getBoard(),piece,pieces.copy())
+    # for i,s in enumerate(solutions):
+    #     print("solution {0}:".format(i))
+    #     for line in s:
+    #         print(line)
 
-#
-print(f"Solutions calculated in {perf_counter() - start_time:0.4f} Seconds...")
-print("found {0} solutions...".format(len(solutions)))
-for i,s in enumerate(solutions):
-    print("solution {0}:".format(i))
-    for line in s:
-        print(line)
+
+if __name__ == "__main__":
+    freeze_support()
+    main()

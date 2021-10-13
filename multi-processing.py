@@ -1,6 +1,5 @@
 from pieces import *
 from copy import deepcopy,copy
-from time import perf_counter
 
 pieces = getPieces()
 solutions = []
@@ -57,16 +56,13 @@ def Solve(s_r,s_i,board,piece,available,depth=1):
             temp_board = deepcopy(board)
             Solve(s_r,s_i,temp_board,p,available.copy(),depth+1)
     
-
 #main
-start_time = perf_counter()
-
 for piece in pieces:
     Solve(0,1,getBoard(),piece,pieces.copy())
 
 #
-print(f"Solutions calculated in {perf_counter() - start_time:0.4f} Seconds...")
 print("found {0} solutions...".format(len(solutions)))
+
 for i,s in enumerate(solutions):
     print("solution {0}:".format(i))
     for line in s:
